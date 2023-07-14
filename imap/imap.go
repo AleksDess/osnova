@@ -9,7 +9,7 @@ import (
 	"osnova/logger"
 	"strings"
 
-	"github.com/emersion/go-imap"
+	goimap "github.com/emersion/go-imap"
 	"github.com/emersion/go-imap/client"
 )
 
@@ -19,6 +19,8 @@ var Behavior_report = ""
 var ImapClient = ""
 var ImapFiles = ""
 var ImapFilesPass = ""
+var ImapSpeed = ""
+var ImapSpeedPass = ""
 
 type MessageSpeed struct {
 	Car    string
@@ -47,7 +49,7 @@ func (a *ListMessageSpeed) Print() {
 	}
 }
 
-func GetImapBox(mailadress, key, box string) (mbox *imap.MailboxStatus, c *client.Client, err error) {
+func GetImapBox(mailadress, key, box string) (mbox *goimap.MailboxStatus, c *client.Client, err error) {
 
 	c, err = client.DialTLS(ImapClient, nil)
 	if err != nil {
@@ -66,7 +68,7 @@ func GetImapBox(mailadress, key, box string) (mbox *imap.MailboxStatus, c *clien
 	return
 }
 
-func Boltmessage(mbox *imap.MailboxStatus, c *client.Client, deleteemails bool) (numberofmessages int, res ListMessageSpeed) {
+func Boltmessage(mbox *goimap.MailboxStatus, c *client.Client, deleteemails bool) (numberofmessages int, res ListMessageSpeed) {
 
 	from := uint32(1)
 	to := mbox.Messages
@@ -79,19 +81,19 @@ func Boltmessage(mbox *imap.MailboxStatus, c *client.Client, deleteemails bool) 
 		return
 	}
 
-	seqset := new(imap.SeqSet)
+	seqset := new(goimap.SeqSet)
 	seqset.AddRange(from, to)
 
 	for i := from; i < to; i++ {
 
-		seqset := new(imap.SeqSet)
+		seqset := new(goimap.SeqSet)
 		//seqset.AddRange(, uint32(i))
 		seqset.AddNum(uint32(i))
 
-		section := &imap.BodySectionName{}
-		items := []imap.FetchItem{section.FetchItem(), imap.FetchEnvelope}
+		section := &goimap.BodySectionName{}
+		items := []goimap.FetchItem{section.FetchItem(), goimap.FetchEnvelope}
 
-		messages := make(chan *imap.Message, 1)
+		messages := make(chan *goimap.Message, 1)
 		done := make(chan error, 1)
 		go func() {
 			done <- c.Fetch(seqset, items, messages)
@@ -153,8 +155,8 @@ func Boltmessage(mbox *imap.MailboxStatus, c *client.Client, deleteemails bool) 
 		for i := from; i < to; i++ {
 			////////////////////////////////////////////
 			// удаление
-			item := imap.FormatFlagsOp(imap.AddFlags, true)
-			flags := []interface{}{imap.DeletedFlag}
+			item := goimap.FormatFlagsOp(goimap.AddFlags, true)
+			flags := []interface{}{goimap.DeletedFlag}
 			err := c.Store(seqset, item, flags, nil)
 			if err != nil {
 				log.Fatal(err)
@@ -230,79 +232,4 @@ func parsestring(s string) (r []string) {
 		r = append(r, "")
 	}
 	return
-}
-
-func Boltfiles() {
-	fmt.Println("Start")
-
-	log.Println("Connecting to server...")
-
-	// Connect to server
-	c, err := client.DialTLS(ImapClient, nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Println("Connected")
-
-	// Don't forget to logout
-	defer c.Logout()
-
-	// Login
-	if err := c.Login(ImapFiles, ImapFilesPass); err != nil {
-		log.Fatal(err)
-	}
-	log.Println("Logged in")
-
-	// List mailboxes
-	mailboxes := make(chan *imap.MailboxInfo, 10)
-	done := make(chan error, 1)
-	go func() {
-		done <- c.List("", "*", mailboxes)
-	}()
-
-	log.Println("Mailboxes:")
-	for m := range mailboxes {
-		log.Println("* " + m.Name)
-	}
-
-	if err := <-done; err != nil {
-		log.Fatal(err)
-	}
-
-	// Select INBOX
-	mbox, err := c.Select("INBOX", false)
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Println("Flags for INBOX:", mbox.Flags)
-
-	// Get the last 4 messages
-	from := uint32(1)
-	to := mbox.Messages
-	log.Println("Total messages", to)
-	if mbox.Messages > 10 {
-		// We're using unsigned integers here, only substract if the result is > 0
-		from = mbox.Messages - 10
-	}
-	seqset := new(imap.SeqSet)
-	seqset.AddRange(from, to)
-	items := []imap.FetchItem{imap.FetchEnvelope}
-
-	messages := make(chan *imap.Message, 10)
-	done = make(chan error, 1)
-	go func() {
-		done <- c.Fetch(seqset, items, messages)
-	}()
-
-	log.Println("Last 10 messages:")
-	log.Println("Len messages:", len(messages))
-	for msg := range messages {
-		log.Println("* " + msg.Envelope.Subject)
-	}
-
-	if err := <-done; err != nil {
-		log.Fatal(err)
-	}
-
-	log.Println("Done!")
 }

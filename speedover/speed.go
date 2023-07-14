@@ -95,7 +95,7 @@ func ProcessingOfExceedanceLetters() {
 	listadress.ReadDb(db)
 
 	for {
-		mbox, c, err := imap.GetImapBox("boltmessage@ukr.net", "penoH6NXl6uqI9Pj", "INBOX")
+		mbox, c, err := imap.GetImapBox(imap.ImapSpeed, imap.ImapSpeedPass, "INBOX")
 		if err != nil {
 			logger.ErrorLog.Println(err)
 			<-time.After(time.Second)

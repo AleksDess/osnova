@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"osnova/imap"
 )
 
 /*
@@ -14,4 +15,6 @@ git push
 func main() {
 	fmt.Println(1)
 	PrintGetEnv()
+
+	imap.GetImapFiles()
 }

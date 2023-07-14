@@ -77,6 +77,9 @@ func OsGetEnv() {
 	imap.ImapClient = os.Getenv("IMAPCLIENT")
 	imap.ImapFiles = os.Getenv("IMAPFILES")
 	imap.ImapFilesPass = os.Getenv("IMAPFILESPASS")
+	imap.ImapSpeed = os.Getenv("IMAPSPEED")
+	imap.ImapSpeedPass = os.Getenv("IMAPSPEEDPASS")
+
 }
 
 func PrintGetEnv() {
@@ -101,6 +104,8 @@ func PrintGetEnv() {
 	log.Println(imap.ImapClient)
 	log.Println(imap.ImapFiles)
 	log.Println(imap.ImapFilesPass)
+	log.Println(imap.ImapSpeed)
+	log.Println(imap.ImapSpeedPass)
 }
 
 func PrintListSity() {

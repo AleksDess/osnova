@@ -12,7 +12,9 @@ require (
 	github.com/apache/arrow/go/v12 v12.0.1 // indirect
 	github.com/apache/thrift v0.18.1 // indirect
 	github.com/emersion/go-imap v1.2.1 // indirect
+	github.com/emersion/go-message v0.16.0 // indirect
 	github.com/emersion/go-sasl v0.0.0-20220912192320-0145f2c60ead // indirect
+	github.com/emersion/go-textwrapper v0.0.0-20200911093747-65d896831594 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
