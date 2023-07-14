@@ -20,23 +20,8 @@ const speed_message = "Отчет подготовлен: Оповещения �
 const hourly_report = "Отчет подготовлен: Пробег по часам"
 const behavior_report = "Отчет подготовлен: Поведение вождения"
 
-var bot_token = ""
-var bot_token_osnova = "2096779449:AAFfd9HsY0OFIQ9JAxWssXDVzs4Tp_Rn4H4"
-var bot_token_test = "5419530014:AAGKNw9CcQa2jxKQiou4wPO7Eaq_g-nUfv0"
-
-var Fesenko = "Не пройшло перевірку у контрольного ДМ"
-var Fesenko_1 = "Часткова відміна штрафу"
-
-var url = "http://92.119.231.174:8081/driver/"
-var urlday = "http://92.119.231.174:8081/day/"
-
-// Файлы для ехел обработки
-// "mail/trip.xlsx"
-// "mail/opov.xlsx"
-
-func init() {
-
-}
+var url = ""
+var urlday = ""
 
 func init() {
 
@@ -46,8 +31,7 @@ func init() {
 		log.Fatalf("Error loading .env file")
 	}
 
-	tgToken := os.Getenv("TELEGRAMBOTTOKEN")
-
+	tgToken := os.Getenv("TGTOKEN")
 	crm.SshHost = os.Getenv("SshHost")
 	crm.SshPort = trs.String_to_int(os.Getenv("SshPort"))
 	crm.SshUser = os.Getenv("SshUser")
@@ -56,6 +40,11 @@ func init() {
 	crm.DbHost = os.Getenv("DbHost")
 	crm.DbName = os.Getenv("DbName")
 	crm.PrivateKeyPath = os.Getenv("PrivateKeyPath")
+	postgree.PostHost = os.Getenv("PostHost")
+	postgree.PostPort = os.Getenv("PostPort")
+	postgree.PostPass = os.Getenv("PostPass")
+	url = os.Getenv("URL")
+	urlday = os.Getenv("URLDAY")
 
 	// без него не Run ---  аемся
 	if tgToken == "" {
