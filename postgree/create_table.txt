@@ -1,0 +1,21 @@
+
+		// графики
+		CREATE TABLE shedule (
+			id SERIAL PRIMARY KEY,
+			day VARCHAR(10),
+			city TEXT,
+			car INTEGER,
+			nomer VARCHAR(10),
+			v1 TEXT,
+			v2 TEXT,
+			status TEXT,
+			time TIMESTAMP WITH TIME ZONE
+		);
+	
+		//test
+		CREATE TABLE test (
+			id SERIAL PRIMARY KEY,
+			day VARCHAR(10),
+			city TEXT,
+			car INTEGER
+		);
