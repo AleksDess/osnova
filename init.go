@@ -8,6 +8,7 @@ import (
 	"osnova/crm"
 	"osnova/logger"
 	"osnova/postgree"
+	"osnova/trs"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -45,11 +46,17 @@ func init() {
 		log.Fatalf("Error loading .env file")
 	}
 
-	port := os.Getenv("PORT")
 	tgToken := os.Getenv("TELEGRAMBOTTOKEN")
 
-	log.Println(port)
-	log.Println(tgToken)
+	crm.SshHost = os.Getenv("SshHost")
+	crm.SshPort = trs.String_to_int(os.Getenv("SshPort"))
+	crm.SshUser = os.Getenv("SshUser")
+	crm.DbUser = os.Getenv("DbUser")
+	crm.DbPass = os.Getenv("DbPass")
+	crm.DbHost = os.Getenv("DbHost")
+	crm.DbName = os.Getenv("DbName")
+	crm.PrivateKeyPath = os.Getenv("PrivateKeyPath")
+
 	// без него не Run ---  аемся
 	if tgToken == "" {
 		logger.ErrorLog.Println("-telegrambottoken is required")

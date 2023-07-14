@@ -35,26 +35,26 @@ func RunDB() (err error) {
 	return
 }
 
+var SshHost = ""
+var SshPort = 22
+var SshUser = ""
+var DbUser = ""
+var DbPass = ""
+var DbHost = ""
+var DbName = ""
+
+var PrivateKeyPath = ""
+
 func GetDB() (db *sql.DB, err error) {
 
-	sshHost := "18.185.123.177"      // SSH Server Hostname/IP
-	sshPort := 22                    // SSH Port
-	sshUser := "developer"           // SSH Username
-	dbUser := "taxicrm"              // DB username
-	dbPass := "Ziw51k0mztKoKBa019H5" // DB Password
-	dbHost := "10.11.0.33"           // DB Hostname/IP
-	dbName := "taxicrm"              // Database name
-
-	privateKeyPath := "C:/bolt_db/tramp/xxxxx"
-
 	// Загрузите файл с ключом
-	privateKey, err := loadPrivateKey(privateKeyPath)
+	privateKey, err := loadPrivateKey(PrivateKeyPath)
 	if err != nil {
 		return
 	}
 	// Настройка параметров SSH-туннеля
 	sshConfig := &ssh.ClientConfig{
-		User: sshUser,
+		User: SshUser,
 		Auth: []ssh.AuthMethod{
 			ssh.PublicKeys(privateKey),
 		},
@@ -62,7 +62,7 @@ func GetDB() (db *sql.DB, err error) {
 	}
 
 	// Connect to the SSH Server
-	sshcon, err := ssh.Dial("tcp", fmt.Sprintf("%s:%d", sshHost, sshPort), sshConfig)
+	sshcon, err := ssh.Dial("tcp", fmt.Sprintf("%s:%d", SshHost, SshPort), sshConfig)
 	if err != nil {
 		return
 	}
@@ -71,7 +71,7 @@ func GetDB() (db *sql.DB, err error) {
 	sql.Register("postgres+ssh", &ViaSSHDialer{sshcon})
 
 	// And now we can use our new driver with the regular postgres connection string tunneled through the SSH connection
-	db, err = sql.Open("postgres+ssh", fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable", dbUser, dbPass, dbHost, dbName))
+	db, err = sql.Open("postgres+ssh", fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable", DbUser, DbPass, DbHost, DbName))
 	if err != nil {
 		return
 	}
