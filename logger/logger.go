@@ -1,7 +1,6 @@
 package logger
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"osnova/path"
@@ -13,13 +12,11 @@ var MessLog *log.Logger
 
 func RunLogger() {
 
-	f_log, err := os.Create("C:/bolt_db/bolt.log")
+	f_log, err := os.Create("C:/osnova/osnova.log")
 
 	if err != nil {
-		fmt.Println(err)
+		os.Exit(1)
 	}
-
-	// defer f_log.Close()
 
 	if path.Place == "server" {
 		InfoLog = log.New(f_log, "INFO\t", log.Ldate|log.Ltime)

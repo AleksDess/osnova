@@ -6,6 +6,7 @@ import (
 	"os"
 	"osnova/citys"
 	"osnova/crm"
+	"osnova/imap"
 	"osnova/logger"
 	"osnova/postgree"
 	"osnova/trs"
@@ -14,14 +15,9 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var problem_avto string
-
-const speed_message = "Отчет подготовлен: Оповещения Компания"
-const hourly_report = "Отчет подготовлен: Пробег по часам"
-const behavior_report = "Отчет подготовлен: Поведение вождения"
-
 var url = ""
 var urlday = ""
+var tgToken = ""
 
 func init() {
 
@@ -31,29 +27,17 @@ func init() {
 		log.Fatalf("Error loading .env file")
 	}
 
-	tgToken := os.Getenv("TGTOKEN")
-	crm.SshHost = os.Getenv("SshHost")
-	crm.SshPort = trs.String_to_int(os.Getenv("SshPort"))
-	crm.SshUser = os.Getenv("SshUser")
-	crm.DbUser = os.Getenv("DbUser")
-	crm.DbPass = os.Getenv("DbPass")
-	crm.DbHost = os.Getenv("DbHost")
-	crm.DbName = os.Getenv("DbName")
-	crm.PrivateKeyPath = os.Getenv("PrivateKeyPath")
-	postgree.PostHost = os.Getenv("PostHost")
-	postgree.PostPort = os.Getenv("PostPort")
-	postgree.PostPass = os.Getenv("PostPass")
-	url = os.Getenv("URL")
-	urlday = os.Getenv("URLDAY")
+	// load data .env
+	OsGetEnv()
+
+	citys.RunListCity()
+	logger.RunLogger()
 
 	// без него не Run ---  аемся
 	if tgToken == "" {
 		logger.ErrorLog.Println("-telegrambottoken is required")
 		os.Exit(1)
 	}
-
-	citys.RunListCity()
-	logger.RunLogger()
 
 	err = postgree.RunDB()
 	if err != nil {
@@ -67,8 +51,56 @@ func init() {
 		os.Exit(1)
 	}
 
-	CreateListCitys()
+	// CreateListCitys()
 	// go create_sitys_List()
+}
+
+func OsGetEnv() {
+	tgToken = os.Getenv("TGTOKEN")
+	crm.SshHost = os.Getenv("SshHost")
+	crm.SshPort = trs.String_to_int(os.Getenv("SshPort"))
+	crm.SshUser = os.Getenv("SshUser")
+	crm.DbUser = os.Getenv("DbUser")
+	crm.DbPass = os.Getenv("DbPass")
+	crm.DbHost = os.Getenv("DbHost")
+	crm.DbName = os.Getenv("DbName")
+	crm.PrivateKeyPath = os.Getenv("PrivateKeyPath")
+	postgree.PostHost = os.Getenv("PostHost")
+	postgree.PostPort = os.Getenv("PostPort")
+	postgree.PostPass = os.Getenv("PostPass")
+	postgree.PostName = os.Getenv("PostName")
+	url = os.Getenv("URL")
+	urlday = os.Getenv("URLDAY")
+	imap.Speed_message = os.Getenv("Speed_message")
+	imap.Hourly_report = os.Getenv("Hourly_report")
+	imap.Behavior_report = os.Getenv("Behavior_report")
+	imap.ImapClient = os.Getenv("IMAPCLIENT")
+	imap.ImapFiles = os.Getenv("IMAPFILES")
+	imap.ImapFilesPass = os.Getenv("IMAPFILESPASS")
+}
+
+func PrintGetEnv() {
+	log.Println(tgToken)
+	log.Println(crm.SshHost)
+	log.Println(crm.SshPort)
+	log.Println(crm.SshUser)
+	log.Println(crm.DbUser)
+	log.Println(crm.DbPass)
+	log.Println(crm.DbHost)
+	log.Println(crm.DbName)
+	log.Println(crm.PrivateKeyPath)
+	log.Println(postgree.PostHost)
+	log.Println(postgree.PostPort)
+	log.Println(postgree.PostPass)
+	log.Println(postgree.PostName)
+	log.Println(url)
+	log.Println(urlday)
+	log.Println(imap.Speed_message)
+	log.Println(imap.Hourly_report)
+	log.Println(imap.Behavior_report)
+	log.Println(imap.ImapClient)
+	log.Println(imap.ImapFiles)
+	log.Println(imap.ImapFilesPass)
 }
 
 func PrintListSity() {

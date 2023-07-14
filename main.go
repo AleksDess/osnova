@@ -13,5 +13,5 @@ git push
 
 func main() {
 	fmt.Println(1)
-
+	PrintGetEnv()
 }

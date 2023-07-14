@@ -3,13 +3,22 @@ package imap
 import (
 	"fmt"
 	"io/ioutil"
+
 	"log"
 	"net/mail"
+	"osnova/logger"
 	"strings"
 
 	"github.com/emersion/go-imap"
 	"github.com/emersion/go-imap/client"
 )
+
+var Speed_message = ""
+var Hourly_report = ""
+var Behavior_report = ""
+var ImapClient = ""
+var ImapFiles = ""
+var ImapFilesPass = ""
 
 type MessageSpeed struct {
 	Car    string
@@ -40,7 +49,7 @@ func (a *ListMessageSpeed) Print() {
 
 func GetImapBox(mailadress, key, box string) (mbox *imap.MailboxStatus, c *client.Client, err error) {
 
-	c, err = client.DialTLS("imap.ukr.net:993", nil)
+	c, err = client.DialTLS(ImapClient, nil)
 	if err != nil {
 		return
 	}
@@ -92,21 +101,21 @@ func Boltmessage(mbox *imap.MailboxStatus, c *client.Client, deleteemails bool) 
 		// log.Println("* " + msg.Envelope.MessageId)
 		r := msg.GetBody(section)
 		if r == nil {
-			log.Fatal("Server didn't returned message body")
+			logger.ErrorLog.Println("Server didn't returned message body")
 		}
 
 		if err := <-done; err != nil {
-			log.Fatal(err)
+			logger.ErrorLog.Println(err)
 		}
 
 		m, err := mail.ReadMessage(r)
 		if err != nil {
-			log.Fatal(err)
+			logger.ErrorLog.Println(err)
 		}
 
 		body, err := ioutil.ReadAll(m.Body)
 		if err != nil {
-			log.Fatal(err)
+			logger.ErrorLog.Println(err)
 		}
 		rs := MessageSpeed{}
 		s := string(body)
@@ -229,7 +238,7 @@ func Boltfiles() {
 	log.Println("Connecting to server...")
 
 	// Connect to server
-	c, err := client.DialTLS("imap.ukr.net:993", nil)
+	c, err := client.DialTLS(ImapClient, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -239,7 +248,7 @@ func Boltfiles() {
 	defer c.Logout()
 
 	// Login
-	if err := c.Login("boltfiles@ukr.net", "5fNzcUNzebyYYJJT"); err != nil {
+	if err := c.Login(ImapFiles, ImapFilesPass); err != nil {
 		log.Fatal(err)
 	}
 	log.Println("Logged in")
