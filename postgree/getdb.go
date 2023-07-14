@@ -12,9 +12,13 @@ func RunDB() (err error) {
 	return
 }
 
+var PostHost = ""
+var PostPort = ""
+var PostPass = ""
+
 func GetDB() (db *sql.DB, err error) {
 
-	connStr := "host=92.119.231.174 port=5432 user=postgres dbname='Gcar compani' password=fd5d6f9v2de4g58i4k25F1DR2G1 sslmode=disable"
+	connStr := fmt.Sprintf("host=%s port=%s user=postgres dbname='Gcar compani' password=%s sslmode=disable", PostHost, PostPort, PostPass)
 
 	db, err = sql.Open("postgres", connStr)
 	if err != nil {
